@@ -7,14 +7,20 @@ df = load_data(csv_file)
 
 st.header("Activity Metrics Over Time")
 
-activity = st.selectbox("Activity", ["Löpning", "Cykling"])
+col1, col2 = st.columns(2)
+
+with col1:
+    activities = ["Löpning", "Cykling"]
+    activity = st.pills("Activity", activities, default=activities[0])
 
 # Filter running activities
 run_df = df[df["Aktivitetstyp"] == activity].copy()
 run_df["Datum"] = pd.to_datetime(run_df["Datum"])
 
 # Create tabs for different metrics
-metric = st.selectbox("Metric", ["Distans", "Tid", "Total stigning"])
+with col2:
+    metrics = ["Distans", "Tid", "Total stigning"]
+    metric = st.pills("Metric", metrics, default=metrics[0])
 
 run_df["Tid"] = run_df["Tid"].dt.total_seconds() / 60  # minutes
 

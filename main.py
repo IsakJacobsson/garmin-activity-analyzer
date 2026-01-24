@@ -40,7 +40,9 @@ def plot_metric(period_freq, fmt, tab_label):
 
     # Create full period range (including missing periods)
     full_range = pd.period_range(
-        start=agg_df.index.min(), end=agg_df.index.max(), freq=period_freq
+        start=agg_df.index.min(),
+        end=pd.Timestamp.today().to_period(period_freq),
+        freq=period_freq,
     )
 
     # Reindex to include missing periods

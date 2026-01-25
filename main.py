@@ -23,6 +23,8 @@ def activity_metrics_over_time_section(df):
     df = df.copy()
     st.header("Activity metrics over time")
 
+    # This has to be done before filtering the df, since the full period is
+    # desired regardless of which activities are selected
     start_date = df["Datum"].min()
     end_date = df["Datum"].max()
 

@@ -20,7 +20,6 @@ def get_user_data_section():
 
 
 def activity_metrics_over_time_section(df):
-    df = df.copy()
     st.header("Activity metrics over time")
 
     # This has to be done before filtering the df, since the full period is

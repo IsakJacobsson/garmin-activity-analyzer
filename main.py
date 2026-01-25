@@ -2,7 +2,12 @@ import streamlit as st
 
 from filters import filter_activities
 from load_data import load_data
-from metrics import aggregate_metric_over_time, get_activities, get_summable_metrics
+from metrics import (
+    aggregate_metric_over_time,
+    convert_time_column_to_hours,
+    get_activities,
+    get_summable_metrics,
+)
 
 
 def activity_metrics_over_time_section(df):
@@ -54,13 +59,6 @@ def multiselect(choices, description):
 def selectbox(choices, description):
     selected_metric = st.selectbox(description, choices)
     return selected_metric
-
-
-def convert_time_column_to_hours(df):
-    df = df.copy()
-    if "Tid" in df.columns:
-        df["Tid"] = df["Tid"].dt.total_seconds() / 3600
-    return df
 
 
 def plot_metric_tab(df, metric, freq, fmt, tab, start_date, end_date):

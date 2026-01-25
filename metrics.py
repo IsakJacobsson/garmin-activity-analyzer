@@ -15,16 +15,11 @@ SUMMABLE_COLUMNS = [
 ]
 
 
-def get_activities(df):
-    return df["Aktivitetstyp"].unique()
-
-
-def get_summable_metrics(df):
-    valid_metrics = []
-    for col in SUMMABLE_COLUMNS:
-        if col in df.columns and not df[col].isna().any():
-            valid_metrics.append(col)
-    return valid_metrics
+def convert_time_column_to_hours(df):
+    df = df.copy()
+    if "Tid" in df.columns:
+        df["Tid"] = df["Tid"].dt.total_seconds() / 3600
+    return df
 
 
 def aggregate_metric_over_time(df, metric, period_freq, start, end):
@@ -36,3 +31,15 @@ def aggregate_metric_over_time(df, metric, period_freq, start, end):
     full_range = pd.period_range(start=start, end=end, freq=period_freq)
 
     return agg.reindex(full_range, fill_value=0).to_frame(metric)
+
+
+def get_activities(df):
+    return df["Aktivitetstyp"].unique()
+
+
+def get_summable_metrics(df):
+    valid_metrics = []
+    for col in SUMMABLE_COLUMNS:
+        if col in df.columns and not df[col].isna().any():
+            valid_metrics.append(col)
+    return valid_metrics

@@ -2,7 +2,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from metrics import aggregate_metric_over_time, get_activities, get_summable_metrics
+from metrics import (
+    aggregate_metric_over_time,
+    convert_time_column_to_hours,
+    get_activities,
+    get_summable_metrics,
+)
 
 
 @pytest.fixture
@@ -18,38 +23,40 @@ def sample_df():
     )
 
 
-def test_get_activites():
-    df = pd.DataFrame({"Aktivitetstyp": ["Löpning", "Cycling", "Styrketräning"]})
+def test_convert_time_column_to_hours_converts_correctly():
+    df = pd.DataFrame(
+        {
+            "Tid": pd.to_timedelta([3600, 5400], unit="s"),
+        }
+    )
 
-    activities = get_activities(df)
+    result = convert_time_column_to_hours(df)
 
-    assert set(activities) == {"Löpning", "Cycling", "Styrketräning"}
-
-
-def test_get_summable_metrics_excludes_columns_with_nan(sample_df):
-    summable = get_summable_metrics(sample_df)
-
-    assert "Distans" in summable
-    assert "Tid" in summable
-    assert "Kalorier" in summable
-
-    # Has NaN → should be excluded
-    assert "Steg" not in summable
+    assert result["Tid"].tolist() == [1.0, 1.5]
 
 
-def test_get_summable_metrics_ignores_missing_columns(sample_df):
-    summable = get_summable_metrics(sample_df)
+def test_convert_time_column_to_hours_no_tid_column():
+    df = pd.DataFrame(
+        {
+            "Distans": [5, 10],
+        }
+    )
 
-    # Column does not exist in df
-    assert "Total stigning" not in summable
+    result = convert_time_column_to_hours(df)
+
+    assert result.equals(df)
 
 
-def test_get_summable_metrics_empty_dataframe():
-    df = pd.DataFrame()
+def test_convert_time_column_to_hours_outputs_float():
+    df = pd.DataFrame(
+        {
+            "Tid": pd.to_timedelta([3600], unit="s"),
+        }
+    )
 
-    summable = get_summable_metrics(df)
+    result = convert_time_column_to_hours(df)
 
-    assert summable == []
+    assert result["Tid"].dtype == "float64"
 
 
 def test_aggregate_metric_over_time_weekly(sample_df):
@@ -102,3 +109,37 @@ def test_aggregate_metric_over_time_does_not_modify_original_df(sample_df):
     )
 
     assert "Period" not in sample_df.columns
+
+
+def test_get_activites():
+    df = pd.DataFrame({"Aktivitetstyp": ["Löpning", "Cycling", "Styrketräning"]})
+
+    activities = get_activities(df)
+
+    assert set(activities) == {"Löpning", "Cycling", "Styrketräning"}
+
+
+def test_get_summable_metrics_excludes_columns_with_nan(sample_df):
+    summable = get_summable_metrics(sample_df)
+
+    assert "Distans" in summable
+    assert "Tid" in summable
+    assert "Kalorier" in summable
+
+    # Has NaN → should be excluded
+    assert "Steg" not in summable
+
+
+def test_get_summable_metrics_ignores_missing_columns(sample_df):
+    summable = get_summable_metrics(sample_df)
+
+    # Column does not exist in df
+    assert "Total stigning" not in summable
+
+
+def test_get_summable_metrics_empty_dataframe():
+    df = pd.DataFrame()
+
+    summable = get_summable_metrics(df)
+
+    assert summable == []

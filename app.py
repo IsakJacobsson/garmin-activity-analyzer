@@ -11,6 +11,13 @@ from metrics import (
     get_summable_metrics,
 )
 
+tab_info = [
+    ("Day", "D", "%Y-%m-%d"),
+    ("Week", "W", "%Y-%W"),
+    ("Month", "M", "%Y-%m"),
+    ("Year", "Y", "%Y"),
+]
+
 
 def get_user_data_section():
     csv_file = st.file_uploader("Upload Garmin CSV file", type="csv")
@@ -48,13 +55,6 @@ def activity_metrics_over_time_section(df):
         return
 
     # Create tabs for different resolutions
-    tab_info = [
-        ("Day", "D", "%Y-%m-%d"),
-        ("Week", "W", "%Y-%W"),
-        ("Month", "M", "%Y-%m"),
-        ("Year", "Y", "%Y"),
-    ]
-
     tabs = st.tabs([label for label, _, _ in tab_info])
 
     for tab, (_, freq, date_format) in zip(tabs, tab_info):
@@ -112,26 +112,18 @@ def rest_day_stats_section(df):
     rest_days_df = pd.DataFrame(
         {
             "Datum": rest_days,
-            "Rest day": 1,
+            "Rest days": 1,
         }
     )
 
     # Create tabs for different resolutions
-    tab_info = [
-        ("Day", "D", "%Y-%m-%d"),
-        ("Week", "W", "%Y-%W"),
-        ("Month", "M", "%Y-%m"),
-        ("Year", "Y", "%Y"),
-    ]
-
     tabs = st.tabs([label for label, _, _ in tab_info])
-
     for tab, (_, freq, date_format) in zip(tabs, tab_info):
         agg_df = aggregate_metric_over_time(
-            rest_days_df, "Rest day", freq, start_date, end_date
+            rest_days_df, "Rest days", freq, start_date, end_date
         )
         with tab:
-            plot_metric(agg_df, "Rest day", date_format)
+            plot_metric(agg_df, "Rest days", date_format)
 
 
 def main():

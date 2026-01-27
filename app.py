@@ -33,8 +33,8 @@ def activity_metrics_over_time_section(df):
 
     # This has to be done before filtering the df, since the full period is
     # desired regardless of which activities are selected
-    start_date = df["Datum"].min()
-    end_date = df["Datum"].max()
+    start_date = df.index.min()
+    end_date = df.index.max()
 
     col1, col2 = st.columns(2)
 
@@ -83,10 +83,9 @@ def selectbox(choices, description):
 
 def plot_metric(df, metric, fmt):
     df = df.copy()
-    df.index = df.index.to_timestamp(how="start")
-    df["PeriodStr"] = df.index.strftime(fmt)
+    df.index = df.index.strftime(fmt)
 
-    st.bar_chart(df.set_index("PeriodStr")[metric])
+    st.bar_chart(df[metric])
 
 
 def rest_day_stats_section(df):
@@ -94,8 +93,8 @@ def rest_day_stats_section(df):
 
     # This has to be done before filtering the df, since the full period is
     # desired regardless of which activities are selected
-    start_date = df["Datum"].min()
-    end_date = df["Datum"].max()
+    start_date = df.index.min()
+    end_date = df.index.max()
 
     activities = get_activities(df)
     active_activities = st.pills(
@@ -109,12 +108,7 @@ def rest_day_stats_section(df):
 
     rest_days = get_days_without_activity(df, start_date, end_date)
 
-    rest_days_df = pd.DataFrame(
-        {
-            "Datum": rest_days,
-            "Rest days": 1,
-        }
-    )
+    rest_days_df = pd.DataFrame({"Rest days": 1}, index=rest_days)
 
     # Create tabs for different resolutions
     tabs = st.tabs([label for label, _, _ in tab_info])

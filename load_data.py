@@ -24,6 +24,7 @@ def load_data(csv_path: str) -> pd.DataFrame:
 
     # Datetime
     df["Datum"] = pd.to_datetime(df["Datum"], errors="coerce")
+    df = df.set_index("Datum")
 
     # 'Steg' reformatted from 6,123 to 6123
     if "Steg" in df.columns:

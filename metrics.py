@@ -24,7 +24,7 @@ def convert_time_column_to_hours(df):
 
 def aggregate_metric_over_time(df, metric, period_freq, start, end):
     df = df.copy()
-    df["Period"] = df["Datum"].dt.to_period(period_freq)
+    df["Period"] = df.index.to_period(period_freq)
 
     agg = df.groupby("Period")[metric].sum().sort_index()
 
@@ -38,7 +38,7 @@ def get_activities(df):
 
 
 def get_days_without_activity(df, start_date, end_date):
-    activity_days = df["Datum"].dt.normalize()
+    activity_days = df.index.normalize()
     start_date = start_date.normalize()
     end_date = end_date.normalize()
 

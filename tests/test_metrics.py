@@ -15,12 +15,12 @@ from metrics import (
 def sample_df():
     return pd.DataFrame(
         {
-            "Datum": pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-08"]),
             "Distans": [5.0, 3.0, 10.0],
             "Tid": [30, 20, 60],
             "Kalorier": [300, 200, 600],
             "Steg": [None, 4000, 8000],  # contains NaN
-        }
+        },
+        index=pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-08"]),
     )
 
 
@@ -124,17 +124,18 @@ def test_days_without_activity_basic():
     df = pd.DataFrame(
         {
             "Activity": ["A", "B", "C"],
-            "Datum": [
+        },
+        index=pd.to_datetime(
+            [
                 "2023-12-30 18:05:42",
                 "2024-01-03 01:33:12",
                 "2024-01-06 23:23:23",
-            ],
-        }
+            ]
+        ),
     )
 
-    df["Datum"] = pd.to_datetime(df["Datum"], errors="coerce")
-    start_date = df["Datum"].min()
-    end_date = df["Datum"].max()
+    start_date = df.index.min()
+    end_date = df.index.max()
 
     result = get_days_without_activity(df, start_date, end_date)
 
@@ -155,17 +156,18 @@ def test_days_without_activity_no_gaps():
     df = pd.DataFrame(
         {
             "Activity": ["A", "B", "C"],
-            "Datum": [
+        },
+        index=pd.to_datetime(
+            [
                 "2023-12-31 18:05:42",
                 "2024-01-01 01:33:12",
                 "2024-01-02 23:23:23",
-            ],
-        }
+            ]
+        ),
     )
 
-    df["Datum"] = pd.to_datetime(df["Datum"], errors="coerce")
-    start_date = df["Datum"].min()
-    end_date = df["Datum"].max()
+    start_date = df.index.min()
+    end_date = df.index.max()
 
     result = get_days_without_activity(df, start_date, end_date)
 

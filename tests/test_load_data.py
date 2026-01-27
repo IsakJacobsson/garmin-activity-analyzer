@@ -13,7 +13,7 @@ def test_string_columns():
         # Check no leading/trailing spaces
         assert all(df[col].str.strip() == df[col])
 
-    assert df.loc[0, "Namn"] == "Väldigt konstigt namn."
+    assert df.iloc[0]["Namn"] == "Väldigt konstigt namn."
 
 
 def test_boolean_columns():
@@ -23,16 +23,14 @@ def test_boolean_columns():
         assert df[col].dtype == bool
 
 
-def test_datetime_column():
+def test_index_is_datetime():
     df = load_data(csv_file)
-    date_cols = ["Datum"]
-    for col in date_cols:
-        assert pd.api.types.is_datetime64_any_dtype(df[col])
+    assert isinstance(df.index, pd.DatetimeIndex)
 
 
 def test_steps():
     df = load_data(csv_file)
-    assert df.loc[0, "Steg"] == 6234
+    assert df.iloc[0]["Steg"] == 6234
 
 
 def test_swim_distance():
@@ -83,7 +81,7 @@ def test_numeric_columns():
     for col in numeric_cols:
         pd.api.types.is_numeric_dtype(df[col])
 
-    assert df.loc[0, "Steg"] == 6234
+    assert df.iloc[0]["Steg"] == 6234
 
 
 def test_timedelta_columns():
@@ -102,9 +100,9 @@ def test_timedelta_columns():
     for col in time_cols:
         assert pd.api.types.is_timedelta64_dtype(df[col])
 
-    assert df.loc[0, "Tid"].seconds == 46 * 60 + 46
-    assert df.loc[0, "Medeltempo"].seconds == 6 * 60 + 22
-    assert df.loc[0, "Bästa tempo"].seconds == 2 * 60 + 34
-    assert df.loc[0, "Bästa varvtid"].total_seconds() == 56.9
-    assert df.loc[0, "Färdtid"].seconds == 38 * 60 + 47
-    assert df.loc[0, "Total tid"].seconds == 46 * 60 + 48
+    assert df.iloc[0]["Tid"].seconds == 46 * 60 + 46
+    assert df.iloc[0]["Medeltempo"].seconds == 6 * 60 + 22
+    assert df.iloc[0]["Bästa tempo"].seconds == 2 * 60 + 34
+    assert df.iloc[0]["Bästa varvtid"].total_seconds() == 56.9
+    assert df.iloc[0]["Färdtid"].seconds == 38 * 60 + 47
+    assert df.iloc[0]["Total tid"].seconds == 46 * 60 + 48

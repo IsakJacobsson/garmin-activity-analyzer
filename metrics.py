@@ -22,11 +22,17 @@ def convert_time_column_to_hours(df):
     return df
 
 
-def aggregate_metric_over_time(df, metric, freq, start, end):
+def aggregate_metric_over_time(df, metric, freq, start=None, end=None):
+    if start is None:
+        start = df.index.min()
+    if end is None:
+        end = df.index.max()
     start = start.normalize()
     end = end.normalize()
 
-    # Need to fix end date for years for some reason...
+    if freq == "ME":
+        start = start + pd.offsets.MonthEnd(0)
+        end = end + pd.offsets.MonthEnd(0)
     if freq == "YE":
         end = end + pd.offsets.YearEnd(0)
 

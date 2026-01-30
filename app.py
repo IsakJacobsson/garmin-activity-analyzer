@@ -31,11 +31,6 @@ def get_user_data_section():
 def activity_metrics_over_time_section(df):
     st.header("Activity metrics over time")
 
-    # This has to be done before filtering the df, since the full period is
-    # desired regardless of which activities are selected
-    start_date = df.index.min()
-    end_date = df.index.max()
-
     col1, col2 = st.columns(2)
 
     with col1:
@@ -58,9 +53,7 @@ def activity_metrics_over_time_section(df):
     tabs = st.tabs([label for label, _, _ in tab_info])
 
     for tab, (_, freq, date_format) in zip(tabs, tab_info):
-        agg_df = aggregate_metric_over_time(
-            df, selected_metric, freq, start_date, end_date
-        )
+        agg_df = aggregate_metric_over_time(df, selected_metric, freq)
         with tab:
             plot_metric(agg_df, selected_metric, date_format)
 

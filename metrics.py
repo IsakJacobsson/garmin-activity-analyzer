@@ -46,12 +46,12 @@ def get_activities(df):
     return df["Aktivitetstyp"].unique()
 
 
-def get_days_without_activity(df, start_date, end_date):
+def get_days_without_activity(df):
     activity_days = df.index.normalize()
-    start_date = start_date.normalize()
-    end_date = end_date.normalize()
+    start = activity_days.min()
+    end = activity_days.max()
 
-    all_days = pd.date_range(start=start_date, end=end_date, freq="D")
+    all_days = pd.date_range(start=start, end=end, freq="D")
 
     days_without_activity = all_days.difference(activity_days)
 

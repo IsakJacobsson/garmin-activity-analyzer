@@ -168,10 +168,7 @@ def test_days_without_activity_basic():
         ),
     )
 
-    start_date = df.index.min()
-    end_date = df.index.max()
-
-    result = get_days_without_activity(df, start_date, end_date)
+    result = get_days_without_activity(df)
 
     expected = pd.DatetimeIndex(
         [
@@ -200,10 +197,7 @@ def test_days_without_activity_no_gaps():
         ),
     )
 
-    start_date = df.index.min()
-    end_date = df.index.max()
-
-    result = get_days_without_activity(df, start_date, end_date)
+    result = get_days_without_activity(df)
 
     expected = pd.DatetimeIndex([])
 

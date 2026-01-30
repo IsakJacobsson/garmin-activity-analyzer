@@ -106,7 +106,7 @@ def rest_day_stats_section(df):
 
     df = filter_activities(df, active_activities)
 
-    rest_days = get_days_without_activity(df, start_date, end_date)
+    rest_days = get_days_without_activity(df)
 
     rest_days_df = pd.DataFrame({"Rest days": 1}, index=rest_days)
 

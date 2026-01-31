@@ -49,15 +49,15 @@ def activity_metrics_over_time_section(df):
         selected_metric = selectbox(valid_metrics, "Metric")
 
     df = convert_time_column_to_hours(df)
-    df = select_metric_and_drop_zeros(df, selected_metric)
+    s = select_metric_and_drop_zeros(df, selected_metric)
 
     # Create tabs for different resolutions
     tabs = st.tabs([label for label, _, _ in tab_info])
 
     for tab, (_, freq, date_format) in zip(tabs, tab_info):
-        agg_df = aggregate_over_time(df, freq)
+        agg_s = aggregate_over_time(s, freq)
         with tab:
-            plot_metric(agg_df, date_format)
+            plot_metric(agg_s, date_format)
 
 
 def multiselect(choices, description):
@@ -76,11 +76,11 @@ def selectbox(choices, description):
     return selected
 
 
-def plot_metric(df, fmt):
-    df = df.copy()
-    df.index = df.index.strftime(fmt)
+def plot_metric(data, fmt):
+    data = data.copy()
+    data.index = data.index.strftime(fmt)
 
-    st.bar_chart(df)
+    st.bar_chart(data)
 
 
 def rest_day_stats_section(df):
@@ -103,14 +103,12 @@ def rest_day_stats_section(df):
 
     rest_days = get_days_without_activity(df)
 
-    rest_days_df = pd.DataFrame({"Rest days": 1}, index=rest_days)
-
     # Create tabs for different resolutions
     tabs = st.tabs([label for label, _, _ in tab_info])
     for tab, (_, freq, date_format) in zip(tabs, tab_info):
-        agg_df = aggregate_over_time(rest_days_df, freq, start_date, end_date)
+        agg_s = aggregate_over_time(rest_days, freq, start_date, end_date)
         with tab:
-            plot_metric(agg_df, date_format)
+            plot_metric(agg_s, date_format)
 
 
 def main():

@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import pytest
 
@@ -13,11 +12,9 @@ from metrics import (
 
 
 @pytest.fixture
-def sample_df():
-    return pd.DataFrame(
-        {
-            "Distans": [5.0, 3.0, 2.0, 10.0],
-        },
+def sample_series():
+    return pd.Series(
+        [5.0, 3.0, 2.0, 10.0],
         index=pd.to_datetime(
             [
                 "2024-01-01 13:12:11",
@@ -86,37 +83,32 @@ def test_convert_time_column_to_hours_outputs_float():
     assert result["Tid"].dtype == "float64"
 
 
-def test_aggregate_over_time_weekly(sample_df):
-
+def test_aggregate_over_time_weekly(sample_series):
     result = aggregate_over_time(
-        df=sample_df,
+        s=sample_series,
         freq="W",
         start=pd.to_datetime("2024-01-01 12:12:13"),
         end=pd.to_datetime("2024-01-14 12:12:13"),
     )
 
-    expected = pd.DataFrame(
-        {
-            "Distans": [10.0, 10.0],
-        },
+    expected = pd.Series(
+        [10.0, 10.0],
         index=pd.to_datetime(["2024-01-07", "2024-01-14"]),
     )
 
     assert result.equals(expected)
 
 
-def test_aggregate_over_time_daily(sample_df):
+def test_aggregate_over_time_daily(sample_series):
     result = aggregate_over_time(
-        df=sample_df,
+        s=sample_series,
         freq="D",
         start=pd.to_datetime("2023-12-31 12:12:13"),
         end=pd.to_datetime("2024-01-10 12:12:13"),
     )
 
-    expected = pd.DataFrame(
-        {
-            "Distans": [0.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0],
-        },
+    expected = pd.Series(
+        [0.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0],
         index=pd.to_datetime(
             [
                 "2023-12-31",
@@ -137,18 +129,16 @@ def test_aggregate_over_time_daily(sample_df):
     assert result.equals(expected)
 
 
-def test_aggregate_over_time_yearly(sample_df):
+def test_aggregate_over_time_yearly(sample_series):
     result = aggregate_over_time(
-        df=sample_df,
+        s=sample_series,
         freq="YE",
         start=pd.to_datetime("2023-12-31 12:12:13"),
         end=pd.to_datetime("2025-01-10 12:12:13"),
     )
 
-    expected = pd.DataFrame(
-        {
-            "Distans": [0.0, 20.0, 0.0],
-        },
+    expected = pd.Series(
+        [0.0, 20.0, 0.0],
         index=pd.to_datetime(
             [
                 "2023-12-31",
@@ -185,14 +175,17 @@ def test_days_without_activity_basic():
 
     result = get_days_without_activity(df)
 
-    expected = pd.DatetimeIndex(
-        [
-            pd.Timestamp("2023-12-31"),
-            pd.Timestamp("2024-01-01"),
-            pd.Timestamp("2024-01-02"),
-            pd.Timestamp("2024-01-04"),
-            pd.Timestamp("2024-01-05"),
-        ]
+    expected = pd.Series(
+        1,
+        index=pd.to_datetime(
+            [
+                "2023-12-31",
+                "2024-01-01",
+                "2024-01-02",
+                "2024-01-04",
+                "2024-01-05",
+            ]
+        ),
     )
 
     assert result.equals(expected)
@@ -214,7 +207,7 @@ def test_days_without_activity_no_gaps():
 
     result = get_days_without_activity(df)
 
-    expected = pd.DatetimeIndex([])
+    expected = pd.Series([], index=pd.DatetimeIndex([], freq="D"), dtype="int64")
 
     assert result.equals(expected)
 
@@ -247,10 +240,8 @@ def test_get_summable_metrics_empty_dataframe():
 def test_select_metric_and_drop_zeros(sample_df_2):
     res = select_metric_and_drop_zeros(sample_df_2, "Totalt nedför")
 
-    expected = pd.DataFrame(
-        {
-            "Totalt nedför": [32, 44],
-        },
+    expected = pd.Series(
+        [32, 44],
         index=pd.to_datetime(
             [
                 "2024-01-01 13:12:11",

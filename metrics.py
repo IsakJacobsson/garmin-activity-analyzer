@@ -22,30 +22,22 @@ def convert_time_column_to_hours(df):
     return df
 
 
-def aggregate_over_time(df, freq, start=None, end=None):
+def aggregate_over_time(s, freq, start=None, end=None):
     if start is None:
-        start = df.index.min()
+        start = s.index.min()
     if end is None:
-        end = df.index.max()
+        end = s.index.max()
+
     start = start.normalize()
     end = end.normalize()
 
     if freq == "ME":
-        start = start + pd.offsets.MonthEnd(0)
-        end = end + pd.offsets.MonthEnd(0)
-    if freq == "YE":
-        end = end + pd.offsets.YearEnd(0)
+        start += pd.offsets.MonthEnd(0)
+        end += pd.offsets.MonthEnd(0)
+    elif freq == "YE":
+        end += pd.offsets.YearEnd(0)
 
-    col = df.columns[0]
-
-    out = (
-        df[col]
-        .resample(freq)
-        .sum()
-        .reindex(pd.date_range(start, end, freq=freq))
-        .fillna(0)
-        .to_frame(col)
-    )
+    out = s.resample(freq).sum().reindex(pd.date_range(start, end, freq=freq)).fillna(0)
 
     return out
 
@@ -56,14 +48,15 @@ def get_activities(df):
 
 def get_days_without_activity(df):
     activity_days = df.index.normalize()
+
     start = activity_days.min()
     end = activity_days.max()
 
     all_days = pd.date_range(start=start, end=end, freq="D")
 
-    days_without_activity = all_days.difference(activity_days)
+    missing_days = all_days.difference(activity_days)
 
-    return days_without_activity
+    return pd.Series(1, index=missing_days)
 
 
 def get_summable_metrics(df):
@@ -75,5 +68,5 @@ def get_summable_metrics(df):
 
 
 def select_metric_and_drop_zeros(df, metric):
-    df = df[[metric]]
-    return df[df.iloc[:, 0] != 0]
+    s = df[metric]
+    return s[s != 0]

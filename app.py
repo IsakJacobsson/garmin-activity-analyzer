@@ -112,7 +112,7 @@ def rest_day_stats_section(df):
 
 
 def main():
-    st.title("Garmin extended data")
+    st.title("Garmin extended stats")
 
     df = get_user_data_section()
     if df is None:

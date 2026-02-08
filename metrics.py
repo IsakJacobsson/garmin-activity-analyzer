@@ -38,7 +38,10 @@ def aggregate_over_time(
     start = start.normalize()
     end = end.normalize()
 
-    if freq == "ME":
+    if freq == "W":
+        start = start - pd.offsets.Week(weekday=6)
+        end = end + pd.offsets.Week(weekday=6)
+    elif freq == "ME":
         start += pd.offsets.MonthEnd(0)
         end += pd.offsets.MonthEnd(0)
     elif freq == "YE":

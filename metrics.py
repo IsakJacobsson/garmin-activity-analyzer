@@ -17,13 +17,6 @@ SUMMABLE_COLUMNS = [
 ]
 
 
-def convert_time_column_to_hours(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    if "Tid" in df.columns:
-        df["Tid"] = df["Tid"].dt.total_seconds() / 3600
-    return df
-
-
 def aggregate_over_time(
     s: pd.Series,
     freq: str,

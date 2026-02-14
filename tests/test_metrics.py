@@ -4,7 +4,6 @@ import pytest
 from metrics import (
     SUMMABLE_COLUMNS,
     aggregate_over_time,
-    convert_time_column_to_hours,
     get_activities,
     get_days_without_activity,
     get_summable_metrics,
@@ -46,42 +45,6 @@ def sample_df_2():
             ]
         ),
     )
-
-
-def test_convert_time_column_to_hours_converts_correctly():
-    df = pd.DataFrame(
-        {
-            "Tid": pd.to_timedelta([3600, 5400], unit="s"),
-        }
-    )
-
-    result = convert_time_column_to_hours(df)
-
-    assert result["Tid"].tolist() == [1.0, 1.5]
-
-
-def test_convert_time_column_to_hours_no_tid_column():
-    df = pd.DataFrame(
-        {
-            "Distans": [5, 10],
-        }
-    )
-
-    result = convert_time_column_to_hours(df)
-
-    assert result.equals(df)
-
-
-def test_convert_time_column_to_hours_outputs_float():
-    df = pd.DataFrame(
-        {
-            "Tid": pd.to_timedelta([3600], unit="s"),
-        }
-    )
-
-    result = convert_time_column_to_hours(df)
-
-    assert result["Tid"].dtype == "float64"
 
 
 def test_aggregate_over_time_weekly(sample_series):
